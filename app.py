@@ -20,9 +20,9 @@ st.set_page_config(
 # --- 커스텀 CSS (Strava 스타일 + 애니메이션) ---
 st.markdown("""
 <style>
-    /* 전체 배경 */
+    /* 전체 배경: 다크 그레이 */
     .stApp {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background-color: #121212;
     }
     
     /* 메인 컨테이너 - 여백 줄임 */
@@ -32,133 +32,178 @@ st.markdown("""
         max-width: 100%;
     }
     
-    /* 커스텀 메트릭 카드 - 크기 줄임 */
+    /* 모든 텍스트 흰색 */
+    h1, h2, h3, h4, h5, h6, p, label, .stMarkdown {
+        color: #ffffff !important;
+    }
+    
+    /* 커스텀 메트릭 카드 - Strava 스타일 */
     .metric-card {
-        background: rgba(255, 255, 255, 0.1);
-        backdrop-filter: blur(10px);
-        border-radius: 15px;
+        background-color: #1e1e1e;
+        border: 1px solid #2d2d2d;
+        border-radius: 12px;
         padding: 15px;
-        border: 1px solid rgba(255, 255, 255, 0.2);
-        box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
-        transition: transform 0.3s ease;
+        box-shadow: 0 4px 12px rgba(0,0,0,0.5);
+        transition: all 0.3s ease;
         margin-bottom: 10px;
     }
     
     .metric-card:hover {
         transform: translateY(-5px);
+        border-color: #fc4c02;
+        box-shadow: 0 6px 20px rgba(252, 76, 2, 0.3);
     }
     
     .metric-value {
         font-size: 2.5rem;
         font-weight: 700;
-        background: linear-gradient(45deg, #FF6B6B, #FFD93D);
-        -webkit-background-clip: text;
-        -webkit-text-fill-color: transparent;
+        color: #fc4c02 !important; /* Strava Orange */
         margin: 0;
         line-height: 1.2;
     }
     
     .metric-label {
-        color: rgba(255, 255, 255, 0.9);
+        color: #888 !important;
         font-size: 0.85rem;
         font-weight: 500;
         margin-top: 5px;
     }
     
     .metric-delta {
-        color: #6BCF7F;
+        color: #00d4aa;
         font-size: 0.9rem;
         margin-top: 5px;
     }
     
-    /* 헤더 스타일 - 크기 줄임 */
+    /* 헤더 스타일 */
     .hero-title {
         font-size: 2.5rem;
         font-weight: 800;
-        color: white;
+        color: #ffffff !important;
         text-align: center;
         margin-bottom: 5px;
-        text-shadow: 2px 2px 4px rgba(0,0,0,0.3);
+        text-shadow: 0 0 20px rgba(252, 76, 2, 0.5);
     }
     
     .hero-subtitle {
         font-size: 1rem;
-        color: rgba(255, 255, 255, 0.8);
+        color: #888 !important;
         text-align: center;
         margin-bottom: 15px;
     }
     
     /* 프로그레스 바 */
-    .progress-container {
-        background: rgba(255, 255, 255, 0.1);
-        border-radius: 10px;
-        padding: 15px;
-        margin: 10px 0;
-    }
-    
-    .progress-bar {
-        height: 25px;
-        background: linear-gradient(90deg, #667eea 0%, #764ba2 100%);
-        border-radius: 15px;
-        transition: width 1s ease;
-    }
-    
-    /* 뱃지 스타일 */
-    .badge {
-        display: inline-block;
-        padding: 6px 12px;
-        border-radius: 20px;
-        background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);
-        color: white;
-        font-weight: 600;
-        margin: 5px;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+    .stProgress > div > div > div > div {
+        background: linear-gradient(90deg, #fc4c02 0%, #ff6b35 100%);
     }
     
     /* 사이드바 스타일 */
     section[data-testid="stSidebar"] {
-        background: linear-gradient(180deg, #2C3E50 0%, #34495E 100%);
+        background-color: #1a1a1a;
+        border-right: 1px solid #2d2d2d;
+    }
+    
+    section[data-testid="stSidebar"] * {
+        color: #ffffff !important;
     }
     
     /* 탭 스타일 */
     .stTabs [data-baseweb="tab-list"] {
         gap: 8px;
+        background-color: transparent;
     }
     
     .stTabs [data-baseweb="tab"] {
-        background-color: rgba(255, 255, 255, 0.1);
-        border-radius: 10px;
-        color: white;
-        font-weight: 600;
+        background-color: #1e1e1e;
+        border: 1px solid #2d2d2d;
+        border-radius: 8px;
+        color: #888;
         padding: 8px 16px;
     }
     
     .stTabs [aria-selected="true"] {
-        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        background-color: #fc4c02;
+        color: white !important;
+        border-color: #fc4c02;
     }
     
-    /* 섹션 제목 크기 줄임 */
+    /* 버튼 스타일 */
+    .stButton > button {
+        background-color: #fc4c02;
+        color: white;
+        border: none;
+        border-radius: 8px;
+        font-weight: 600;
+        transition: all 0.3s ease;
+    }
+    
+    .stButton > button:hover {
+        background-color: #e64402;
+        box-shadow: 0 4px 12px rgba(252, 76, 2, 0.4);
+    }
+    
+    /* 섹션 제목 크기 */
     h2 {
         font-size: 1.5rem !important;
         margin-top: 0.5rem !important;
         margin-bottom: 0.5rem !important;
+        color: #fc4c02 !important;
     }
     
     h3 {
         font-size: 1.2rem !important;
         margin-top: 0.3rem !important;
         margin-bottom: 0.3rem !important;
+        color: #ffffff !important;
     }
     
-    /* Plotly 차트 여백 줄임 */
-    .js-plotly-plot {
-        margin-bottom: 10px !important;
+    h4 {
+        font-size: 1rem !important;
+        color: #fc4c02 !important;
     }
     
-    /* 구분선 여백 줄임 */
+    /* 구분선 */
     hr {
         margin-top: 0.5rem !important;
         margin-bottom: 0.5rem !important;
+        border-color: #2d2d2d !important;
+    }
+    
+    /* 인풋 필드 */
+    .stTextInput > div > div > input,
+    .stNumberInput > div > div > input,
+    .stSelectbox > div > div > div {
+        background-color: #1e1e1e;
+        color: white;
+        border: 1px solid #2d2d2d;
+    }
+    
+    /* 데이터프레임 */
+    .stDataFrame {
+        background-color: #1e1e1e;
+    }
+    
+    /* 메트릭 컴포넌트 오버라이드 */
+    [data-testid="stMetricValue"] {
+        color: #fc4c02 !important;
+    }
+    
+    [data-testid="stMetricLabel"] {
+        color: #888 !important;
+    }
+    
+    /* Expander */
+    .streamlit-expanderHeader {
+        background-color: #1e1e1e;
+        border: 1px solid #2d2d2d;
+        border-radius: 8px;
+    }
+    
+    /* Info/Success/Warning 박스 */
+    .stAlert {
+        background-color: #1e1e1e;
+        border: 1px solid #2d2d2d;
+        color: white;
     }
 </style>
 """, unsafe_allow_html=True)
@@ -435,7 +480,7 @@ def create_activity_heatmap(df):
     ))
     
     fig.update_layout(
-        title="📅 Annual Activity Heatmap",
+        title=dict(text="📅 Annual Activity Heatmap", font=dict(color='white')),
         xaxis_title="Week",
         yaxis_title="",
         height=200,
@@ -444,6 +489,8 @@ def create_activity_heatmap(df):
         font=dict(color='white'),
         margin=dict(l=50, r=50, t=50, b=30)
     )
+    fig.update_xaxes(color='white', showgrid=False)
+    fig.update_yaxes(color='white', showgrid=False)
     
     return fig
 
@@ -657,8 +704,11 @@ def main():
                 plot_bgcolor='rgba(0,0,0,0)',
                 font=dict(color='white'),
                 height=300,
-                margin=dict(l=50, r=50, t=50, b=50)
+                margin=dict(l=50, r=50, t=50, b=50),
+                showlegend=False
             )
+            fig_monthly.update_xaxes(showgrid=False, color='white')
+            fig_monthly.update_yaxes(showgrid=True, gridcolor='#2d2d2d', color='white')
             st.plotly_chart(fig_monthly, use_container_width=True)
         
         with col2:
@@ -685,12 +735,16 @@ def main():
                 font=dict(color='white'),
                 height=300,
                 margin=dict(l=50, r=50, t=50, b=50),
+                showlegend=False,
                 xaxis=dict(
                     tickangle=-45,
                     tickmode='linear',
-                    dtick=4  # 4주마다 표시
+                    dtick=4,
+                    showgrid=False,
+                    color='white'
                 )
             )
+            fig_weekly.update_yaxes(showgrid=True, gridcolor='#2d2d2d', color='white')
             st.plotly_chart(fig_weekly, use_container_width=True)
         
         # 페이스 트렌드
@@ -707,13 +761,15 @@ def main():
             labels={'pace': 'Pace (min/km)', 'start_date_local': 'Date'},
             color_continuous_scale='RdYlGn'  # 빠를수록(낮은 값) 빨간색, 느릴수록(높은 값) 초록색
         )
-        fig_pace_trend.update_yaxes(autorange="reversed")
+        fig_pace_trend.update_yaxes(autorange="reversed", showgrid=True, gridcolor='#2d2d2d', color='white')
+        fig_pace_trend.update_xaxes(showgrid=False, color='white')
         fig_pace_trend.update_layout(
             paper_bgcolor='rgba(0,0,0,0)',
             plot_bgcolor='rgba(0,0,0,0)',
             font=dict(color='white'),
             height=350,
-            margin=dict(l=50, r=50, t=50, b=50)
+            margin=dict(l=50, r=50, t=50, b=50),
+            showlegend=False
         )
         st.plotly_chart(fig_pace_trend, use_container_width=True)
     
@@ -737,7 +793,9 @@ def main():
                 )
                 fig_pace_zone.update_layout(
                     paper_bgcolor='rgba(0,0,0,0)',
-                    font=dict(color='white')
+                    font=dict(color='white'),
+                    showlegend=True,
+                    legend=dict(font=dict(color='white'))
                 )
                 st.plotly_chart(fig_pace_zone, use_container_width=True)
         
@@ -753,11 +811,13 @@ def main():
                 labels={'distance_km': 'Distance (km)', 'pace': 'Pace (min/km)'},
                 color_continuous_scale='RdYlGn'  # 빠를수록(낮은 값) 빨간색
             )
-            fig_dist_pace.update_yaxes(autorange="reversed")
+            fig_dist_pace.update_yaxes(autorange="reversed", showgrid=True, gridcolor='#2d2d2d', color='white')
+            fig_dist_pace.update_xaxes(showgrid=True, gridcolor='#2d2d2d', color='white')
             fig_dist_pace.update_layout(
                 paper_bgcolor='rgba(0,0,0,0)',
                 plot_bgcolor='rgba(0,0,0,0)',
-                font=dict(color='white')
+                font=dict(color='white'),
+                showlegend=False
             )
             st.plotly_chart(fig_dist_pace, use_container_width=True)
         
@@ -780,8 +840,11 @@ def main():
             fig_hr.update_layout(
                 paper_bgcolor='rgba(0,0,0,0)',
                 plot_bgcolor='rgba(0,0,0,0)',
-                font=dict(color='white')
+                font=dict(color='white'),
+                showlegend=False
             )
+            fig_hr.update_xaxes(showgrid=True, gridcolor='#2d2d2d', color='white')
+            fig_hr.update_yaxes(showgrid=True, gridcolor='#2d2d2d', color='white')
             st.plotly_chart(fig_hr, use_container_width=True)
     
     with tab3:
@@ -889,8 +952,11 @@ def main():
             fig_weekday.update_layout(
                 paper_bgcolor='rgba(0,0,0,0)',
                 plot_bgcolor='rgba(0,0,0,0)',
-                font=dict(color='white')
+                font=dict(color='white'),
+                showlegend=False
             )
+            fig_weekday.update_xaxes(showgrid=False, color='white')
+            fig_weekday.update_yaxes(showgrid=True, gridcolor='#2d2d2d', color='white')
             st.plotly_chart(fig_weekday, use_container_width=True)
         
         with col2:
@@ -906,7 +972,9 @@ def main():
                 )
                 fig_time.update_layout(
                     paper_bgcolor='rgba(0,0,0,0)',
-                    font=dict(color='white')
+                    font=dict(color='white'),
+                    showlegend=True,
+                    legend=dict(font=dict(color='white'))
                 )
                 st.plotly_chart(fig_time, use_container_width=True)
         
@@ -927,8 +995,11 @@ def main():
             )
             fig_heatmap.update_layout(
                 paper_bgcolor='rgba(0,0,0,0)',
-                font=dict(color='white')
+                font=dict(color='white'),
+                plot_bgcolor='rgba(0,0,0,0)'
             )
+            fig_heatmap.update_xaxes(color='white')
+            fig_heatmap.update_yaxes(color='white')
             st.plotly_chart(fig_heatmap, use_container_width=True)
     
     with tab5:
