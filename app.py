@@ -289,6 +289,7 @@ def process_data(data):
     df['distance_km'] = df['distance'] / 1000
     df['moving_time_min'] = df['moving_time'] / 60
     df['pace'] = df.apply(lambda x: x['moving_time_min'] / x['distance_km'] if x['distance_km'] > 0 else 0, axis=1)
+    df = df[df['pace'] < 10].copy() # 비정상적인 페이스 제거 (10분/km 이상)
     
     # 페이스 존 분류
     df['pace_zone'] = df['pace'].apply(classify_pace_zone)
@@ -712,22 +713,24 @@ def main():
             st.plotly_chart(fig_monthly, use_container_width=True)
         
         with col2:
-            # 주간 거리 트렌드
-            weekly_data = df.groupby([df['start_date_local'].dt.to_period('W')])['distance_km'].sum().reset_index()
-            weekly_data['start_date_local'] = weekly_data['start_date_local'].astype(str)
+            # 주간 거리 트렌드 - 년도와 주차로 정확하게 그룹화
+            df_temp = df.copy()
+            df_temp['year'] = df_temp['start_date_local'].dt.isocalendar().year
+            df_temp['week'] = df_temp['start_date_local'].dt.isocalendar().week
+            df_temp['week_label'] = df_temp['year'].astype(str) + '-W' + df_temp['week'].astype(str).str.zfill(2)
             
-            # X축 레이블을 '년도-주차' 형식으로 변경
-            weekly_data['week_label'] = weekly_data['start_date_local'].apply(
-                lambda x: f"{x[:4]}-W{x[5:7]}" if len(x) >= 7 else x
-            )
+            weekly_data = df_temp.groupby('week_label')['distance_km'].sum().reset_index()
+            weekly_data = weekly_data.sort_values('week_label').tail(52)  # 정렬
             
-            fig_weekly = px.line(
+            fig_weekly = px.bar(
                 weekly_data,
                 x='week_label',
                 y='distance_km',
-                title="Weekly Distance Trend",
+                title="Weekly Distance Trend (Last 52 Weeks)",
                 labels={'distance_km': 'Distance (km)', 'week_label': 'Week'},
-                markers=True
+                text_auto='.0f',
+                color='distance_km',
+                color_continuous_scale=[[0, '#1976d2'], [0.5, '#ff9800'], [1, '#d32f2f']]
             )
             fig_weekly.update_layout(
                 paper_bgcolor='rgba(0,0,0,0)',
@@ -848,45 +851,96 @@ def main():
             st.plotly_chart(fig_hr, use_container_width=True)
     
     with tab3:
-        st.markdown("### 🏆 Personal Records & Achievements")
+        st.markdown("### 🏆 Personal Records")
         
-        # 개인 기록 카드
+        # PB 계산 함수
+        def get_pb(df, min_km, max_km=None):
+            """특정 거리 범위에서 가장 빠른 기록 찾기"""
+            if max_km:
+                filtered = df[(df['distance_km'] >= min_km) & (df['distance_km'] < max_km) & (df['pace'] > 0)]
+            else:
+                filtered = df[(df['distance_km'] >= min_km) & (df['pace'] > 0)]
+            
+            if filtered.empty:
+                return None
+            
+            return filtered.nsmallest(1, 'pace').iloc[0]
+        
+        # 10K PB
+        pb_10k = get_pb(df, 9.5, 11)  # 9.5km ~ 11km
+        
+        # 하프마라톤 PB
+        pb_half = get_pb(df, 21.0, 22)  # 21km ~ 22km
+        
+        # 풀마라톤 PB
+        pb_full = get_pb(df, 42.0)  # 42km 이상
+        
+        # PB 카드 3개
         col1, col2, col3 = st.columns(3)
         
         with col1:
-            st.markdown("#### 🥇 Best Pace")
-            best_pace_run = df[df['pace'] > 0].nsmallest(1, 'pace')
-            if not best_pace_run.empty:
-                pace_formatted = format_pace(best_pace_run.iloc[0]['pace'])
+            st.markdown("#### 🥉 10K Personal Best")
+            if pb_10k is not None:
+                total_seconds = pb_10k['moving_time']
+                hours = int(total_seconds // 3600)
+                minutes = int((total_seconds % 3600) // 60)
+                seconds = int(total_seconds % 60)
+                
+                if hours > 0:
+                    time_str = f"{hours}:{minutes:02d}:{seconds:02d}"
+                else:
+                    time_str = f"{minutes}:{seconds:02d}"
+                
                 st.metric(
-                    "Fastest Run",
-                    f"{pace_formatted} /km",
-                    f"{best_pace_run.iloc[0]['distance_km']:.1f} km"
+                    "Time",
+                    time_str,
+                    f"{pb_10k['distance_km']:.2f} km"
                 )
-                st.caption(f"📅 {best_pace_run.iloc[0]['start_date_local'].strftime('%Y-%m-%d')}")
+                st.caption(f"**{pb_10k['name']}**")
+                st.caption(f"📅 {pb_10k['start_date_local'].strftime('%Y-%m-%d')}")
+                st.caption(f"⚡ Avg Pace: {format_pace(pb_10k['pace'])}")
+            else:
+                st.info("아직 10K 기록이 없습니다")
         
         with col2:
-            st.markdown("#### 🥈 Longest Distance")
-            longest_run = df.nlargest(1, 'distance_km')
-            if not longest_run.empty:
-                pace_formatted = format_pace(longest_run.iloc[0]['pace'])
+            st.markdown("#### 🥈 Half Marathon PB")
+            if pb_half is not None:
+                total_seconds = pb_half['moving_time']
+                hours = int(total_seconds // 3600)
+                minutes = int((total_seconds % 3600) // 60)
+                seconds = int(total_seconds % 60)
+                time_str = f"{hours}:{minutes:02d}:{seconds:02d}"
+                
                 st.metric(
-                    "Longest Run",
-                    f"{longest_run.iloc[0]['distance_km']:.2f} km",
-                    f"{pace_formatted} /km"
+                    "Time",
+                    time_str,
+                    f"{pb_half['distance_km']:.2f} km"
                 )
-                st.caption(f"📅 {longest_run.iloc[0]['start_date_local'].strftime('%Y-%m-%d')}")
+                st.caption(f"**{pb_half['name']}**")
+                st.caption(f"📅 {pb_half['start_date_local'].strftime('%Y-%m-%d')}")
+                st.caption(f"⚡ Avg Pace: {format_pace(pb_half['pace'])}")
+            else:
+                st.info("아직 하프마라톤 기록이 없습니다")
         
         with col3:
-            st.markdown("#### 🥉 Most Active Month")
-            monthly_totals = df.groupby(df['start_date_local'].dt.to_period('M'))['distance_km'].sum()
-            best_month = monthly_totals.idxmax()
-            if best_month:
+            st.markdown("#### 🥇 Full Marathon PB")
+            if pb_full is not None:
+                total_seconds = pb_full['moving_time']
+                hours = int(total_seconds // 3600)
+                minutes = int((total_seconds % 3600) // 60)
+                seconds = int(total_seconds % 60)
+                time_str = f"{hours}:{minutes:02d}:{seconds:02d}"
+                
                 st.metric(
-                    "Best Month",
-                    str(best_month),
-                    f"{monthly_totals[best_month]:.1f} km"
+                    "Time",
+                    time_str,
+                    f"{pb_full['distance_km']:.2f} km"
                 )
+                st.caption(f"**{pb_full['name']}**")
+                st.caption(f"📅 {pb_full['start_date_local'].strftime('%Y-%m-%d')}")
+                st.caption(f"⚡ Avg Pace: {format_pace(pb_full['pace'])}")
+            else:
+                st.info("아직 풀마라톤 기록이 없습니다")
         
         # 연속 러닝 기록 (스트릭)
         st.markdown("---")
