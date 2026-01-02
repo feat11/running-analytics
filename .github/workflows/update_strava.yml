@@ -1,0 +1,39 @@
+name: Update Strava Data
+
+on:
+  schedule:
+    # 매일 UTC 23:00 (한국시간 08:00)에 실행
+    - cron: '0 23 * * *'
+  workflow_dispatch: # 수동 실행도 가능
+
+jobs:
+  update-data:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+      
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: '3.10'
+        
+    - name: Install dependencies
+      run: |
+        pip install pandas requests
+        
+    - name: Update Strava data
+      env:
+        STRAVA_CLIENT_ID: ${{ secrets.STRAVA_CLIENT_ID }}
+        STRAVA_CLIENT_SECRET: ${{ secrets.STRAVA_CLIENT_SECRET }}
+        STRAVA_REFRESH_TOKEN: ${{ secrets.STRAVA_REFRESH_TOKEN }}
+      run: |
+        python update_data.py
+        
+    - name: Commit and push if changed
+      run: |
+        git config --global user.email "github-actions[bot]@users.noreply.github.com"
+        git config --global user.name "github-actions[bot]"
+        git add running_data.csv app_config.json
+        git diff --quiet && git diff --staged --quiet || (git commit -m "Auto update: $(date +'%Y-%m-%d %H:%M')" && git push)
