@@ -1,4 +1,5 @@
 name,distance,moving_time,start_date_local,total_elevation_gain,type,average_heartrate,max_heartrate,average_speed,max_speed,date,hour,weekday,week,month,year,distance_km,moving_time_min,pace,pace_zone,time_of_day
+러닝,6019.6,2015,2026-03-03 19:56:22+00:00,15.0,Run,130.6,149.0,2.987,11.16,2026-03-03,19,Tuesday,10,3,2026,6.0196000000000005,33.583333333333336,5.578997497065143,🏃 Easy (5:30-6:30),🌙 Evening
 2026  Run your way HALF RACE SEOUL,21207.6,5368,2026-03-02 07:32:43+00:00,61.0,Run,169.8,182.0,3.951,10.82,2026-03-02,7,Monday,10,3,2026,21.2076,89.46666666666667,4.218613453038848,🔥 Speed (< 4:30),🌅 Morning
 러닝,10542.8,3759,2026-02-26 19:56:16+00:00,13.0,Run,130.6,153.0,2.805,6.0,2026-02-26,19,Thursday,9,2,2026,10.5428,62.65,5.942444132488523,🏃 Easy (5:30-6:30),🌙 Evening
 러닝,8185.9,2909,2026-02-25 20:44:06+00:00,4.0,Run,138.0,155.0,2.814,6.34,2026-02-25,20,Wednesday,9,2,2026,8.1859,48.483333333333334,5.92278592864967,🏃 Easy (5:30-6:30),🌙 Evening
