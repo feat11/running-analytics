@@ -1,4 +1,5 @@
 name,distance,moving_time,start_date_local,total_elevation_gain,type,average_heartrate,max_heartrate,average_speed,max_speed,date,hour,weekday,week,month,year,distance_km,moving_time_min,pace,pace_zone,time_of_day
+2026 Boston Marathon,42586.9,13768,2026-04-20 10:05:01+00:00,277.0,Run,159.8,186.0,3.093,4.4,2026-04-20,10,Monday,17,4,2026,42.5869,229.46666666666667,5.388198405299908,⚡ Tempo (4:30-5:30),🌅 Morning
 Boston 러닝,1768.9,647,2026-04-19 10:07:51+00:00,5.0,Run,142.3,156.0,2.734,4.28,2026-04-19,10,Sunday,16,4,2026,1.7689000000000001,10.783333333333333,6.096067235758569,🏃 Easy (5:30-6:30),🌅 Morning
 Boston 러닝,672.0,223,2026-04-19 10:02:48+00:00,0.0,Run,128.9,137.0,3.013,4.68,2026-04-19,10,Sunday,16,4,2026,0.672,3.716666666666667,5.530753968253968,🏃 Easy (5:30-6:30),🌅 Morning
 Boston 러닝,628.9,270,2026-04-19 09:53:53+00:00,0.0,Run,110.3,142.0,2.329,3.78,2026-04-19,9,Sunday,16,4,2026,0.6289,4.5,7.155350612179997,🚶 Recovery (> 6:30),🌅 Morning
